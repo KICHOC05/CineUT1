@@ -1,7 +1,5 @@
-// Define el paquete donde se encuentra la clase
 package com.bmt.Cine.config;
 
-// Importa las anotaciones y clases necesarias de Spring Security
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,41 +8,45 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-// Marca esta clase como una clase de configuración de Spring
 @Configuration
-// Habilita la configuración de seguridad web
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // Define un bean para configurar la cadena de filtros de seguridad
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 // Configura las autorizaciones para las solicitudes HTTP
                 .authorizeHttpRequests(auth -> auth
                         // Permite el acceso público a las rutas especificadas
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/contact").permitAll()
-                        .requestMatchers("/store/**").permitAll()
-                        .requestMatchers("/register").permitAll()
-                        .requestMatchers("/login").permitAll()
-                        .requestMatchers("/logout").permitAll()
+                        .requestMatchers("/", "/contact", "/store/**", "/register", "/login", "/logout").permitAll()
+                        // Restringe el acceso al dashboard solo a usuarios con el rol "ADMIN"
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         // Requiere autenticación para cualquier otra solicitud
                         .anyRequest().authenticated()
                 )
                 // Configura el formulario de login
                 .formLogin(form -> form
-                        // Redirige al usuario a la página principal después del login
-                        .defaultSuccessUrl("/", true)
+                        .loginPage("/login") // Especifica la página de login personalizada
+                        .loginProcessingUrl("/login") // Especifica la URL para procesar el login
+                        .defaultSuccessUrl("/", true) // Redirige al usuario a la página principal después del login
+                        .failureUrl("/login?error=true") // Redirige al usuario a la página de login en caso de error
+                        .permitAll() // Permite el acceso a la página de login a todos
                 )
                 // Configura el logout
-                .logout(config -> config.logoutSuccessUrl("/"))
-                // Construye y devuelve la configuración de seguridad
+                .logout(logout -> logout
+                        .logoutUrl("/logout") // Especifica la URL para cerrar sesión
+                        .logoutSuccessUrl("/") // Redirige al usuario a la página principal después del logout
+                        .invalidateHttpSession(true) // Invalida la sesión actual
+                        .clearAuthentication(true) // Limpia la autenticación
+                        .permitAll() // Permite el acceso a la funcionalidad de logout a todos
+                )
+                // Deshabilita la protección CSRF (opcional)
+                .csrf(csrf -> csrf.disable()) // Opcional: deshabilita CSRF si no lo necesitas
                 .build();
     }
-    
-    @Bean 
+
+    @Bean
     public PasswordEncoder passwordEncoder() {
-    	return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // Configura el codificador de contraseñas
     }
 }
