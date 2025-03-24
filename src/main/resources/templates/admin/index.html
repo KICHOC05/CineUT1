@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${titulo}">Panel de Administración</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a th:href="@{/admin}">Inicio</a></li>
+            <li><a th:href="@{/logout}">Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+    <main>
+        <h1>Bienvenido al Panel de Administración</h1>
+        <p sec:authentication="name"></p>
+    </main>
+</body>
+</html>
