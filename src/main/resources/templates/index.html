@@ -4,54 +4,269 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cinema</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <title>Cine UTT - Inicio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+      .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                    url('https://via.placeholder.com/1920x1080') no-repeat center center;
+        background-size: cover;
+        color: white;
+        padding: 8rem 0;
+        text-align: center;
+        margin-bottom: 3rem;
+      }
+      .feature-card {
+        transition: transform 0.3s;
+        margin-bottom: 1.5rem;
+      }
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      .auth-section {
+        background-color: #f8f9fa;
+        padding: 3rem 0;
+        border-radius: 8px;
+      }
+      .admin-panel {
+        background-color: #f8f9fa;
+        border-left: 4px solid #dc3545;
+        padding: 1rem;
+        margin-top: 2rem;
+      }
+    </style>
   </head>
   <body>
     
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-      <div class="container-fluid">
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
         <a class="navbar-brand" href="/">Cine UTT</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        
+        <!-- Botón de Dashboard para Admin -->
+        <button sec:authorize="hasRole('ADMIN')" 
+                class="btn btn-outline-danger me-2" 
+                type="button" 
+                data-bs-toggle="offcanvas" 
+                data-bs-target="#dashboardOffcanvas">
+          <i class="bi bi-speedometer2"></i> Dashboard
+        </button>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublic">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        
+        <div class="collapse navbar-collapse" id="navbarPublic">
+          <ul class="navbar-nav me-auto">
             <li class="nav-item">
-              <a class="nav-link text-dark" href="/">Home</a>
+              <a class="nav-link active" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-dark" href="/contact">Contact</a>
+              <a class="nav-link" href="/movies">Películas</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/contact">Contacto</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/privacy">Privacidad</a>
             </li>
           </ul>
           
-          <ul class="navbar-nav me-3" sec:authorize="isAuthenticated()">
+          <!-- Menú de usuario autenticado -->
+          <ul class="navbar-nav" sec:authorize="isAuthenticated()">
             <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle text-dark" href="#" role="button" data-bs-toggle="dropdown">
-                Usuario
+              <a class="nav-link dropdown-toggle text-white" href="#" role="button" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle"></i> <span sec:authentication="name"></span>
               </a>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="/profile">Perfil</a></li>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Perfil</a></li>
+                <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Panel Admin</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form th:action="@{/logout}" method="post">
+                    <button class="dropdown-item" type="submit"><i class="bi bi-box-arrow-right"></i> Cerrar sesión</button>
+                  </form>
+                </li>
               </ul>
             </li>
           </ul>
           
-          <ul class="navbar-nav" sec:authorize="!isAuthenticated()">
-            <li class="nav-item">
-              <a href="/register" class="btn btn-outline-primary me-2">Registrar</a>
-            </li>			
-            <li class="nav-item">
-              <a href="/login" class="btn btn-primary">Inicio de Sesión</a>
-            </li>
-          </ul>
+          <!-- Menú para usuarios no autenticados -->
+          <div class="d-flex" sec:authorize="!isAuthenticated()">
+            <a href="/register" class="btn btn-outline-light me-2">Registrarse</a>
+            <a href="/login" class="btn btn-primary">Iniciar Sesión</a>
+          </div>
         </div>
       </div>
     </nav>
-    
-    <div class="container py-5">
-      <h1 class="text-center">Hello</h1>
+
+    <!-- Sidebar del Dashboard (Offcanvas) para Admin -->
+    <div sec:authorize="hasRole('ADMIN')" 
+         class="offcanvas offcanvas-start" 
+         tabindex="-1" 
+         id="dashboardOffcanvas" 
+         aria-labelledby="dashboardLabel">
+      <div class="offcanvas-header bg-dark text-white">
+        <h5 class="offcanvas-title" id="dashboardLabel">
+          <i class="bi bi-speedometer2"></i> Panel de Administración
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/dashboard">
+              <i class="bi bi-speedometer2"></i> Dashboard Principal
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/users">
+              <i class="bi bi-people-fill"></i> Gestión de Usuarios
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/movies">
+              <i class="bi bi-film"></i> Gestión de Películas
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/screenings">
+              <i class="bi bi-calendar-event"></i> Programaciones
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin/reports">
+              <i class="bi bi-graph-up"></i> Reportes
+            </a>
+          </li>
+        </ul>
+      </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- Sección Hero -->
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="display-4 fw-bold">Bienvenido a Cine UTT</h1>
+        <p class="lead">Disfruta de las mejores películas en cartelera</p>
+        <div class="mt-4">
+          <a href="/movies" class="btn btn-primary btn-lg me-2">Ver Cartelera</a>
+          <a href="/register" sec:authorize="!isAuthenticated()" class="btn btn-outline-light btn-lg">Registrarse</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contenido principal público -->
+    <div class="container my-5">
+      <!-- Panel de Admin (solo visible para administradores) -->
+      <div sec:authorize="hasRole('ADMIN')" class="admin-panel">
+        <h3><i class="bi bi-shield-lock"></i> Zona de Administración</h3>
+        <p>Bienvenido al panel de control administrativo. Desde aquí puedes gestionar todos los aspectos del cine.</p>
+        <div class="d-grid gap-2 d-md-flex">
+          <a href="/admin/dashboard" class="btn btn-danger me-md-2">
+            <i class="bi bi-speedometer2"></i> Ir al Dashboard
+          </a>
+          <a href="/admin/movies" class="btn btn-outline-danger">
+            <i class="bi bi-film"></i> Gestionar Películas
+          </a>
+        </div>
+      </div>
+      
+      <div class="row text-center mb-5">
+        <div class="col">
+          <h2>Nuestras Películas Destacadas</h2>
+          <p class="lead">Descubre lo mejor del cine actual</p>
+        </div>
+      </div>
+      
+      <div class="row">
+        <!-- Película 1 -->
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <img src="https://via.placeholder.com/300x450" class="card-img-top" alt="Película 1">
+            <div class="card-body">
+              <h5 class="card-title">Película 1</h5>
+              <p class="card-text">Breve descripción de la película.</p>
+              <a href="#" class="btn btn-outline-primary">Ver detalles</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Película 2 -->
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <img src="https://via.placeholder.com/300x450" class="card-img-top" alt="Película 2">
+            <div class="card-body">
+              <h5 class="card-title">Película 2</h5>
+              <p class="card-text">Breve descripción de la película.</p>
+              <a href="#" class="btn btn-outline-primary">Ver detalles</a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Película 3 -->
+        <div class="col-md-4">
+          <div class="card feature-card">
+            <img src="https://via.placeholder.com/300x450" class="card-img-top" alt="Película 3">
+            <div class="card-body">
+              <h5 class="card-title">Película 3</h5>
+              <p class="card-text">Breve descripción de la película.</p>
+              <a href="#" class="btn btn-outline-primary">Ver detalles</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sección de autenticación (solo para no autenticados) -->
+    <div class="auth-section" sec:authorize="!isAuthenticated()">
+      <div class="container text-center">
+        <h2>¿Listo para disfrutar?</h2>
+        <p class="lead mb-4">Regístrate ahora para reservar tus entradas y acceder a promociones exclusivas</p>
+        <a href="/register" class="btn btn-primary btn-lg me-3">
+          <i class="bi bi-person-plus"></i> Crear cuenta
+        </a>
+        <span class="mx-2">o</span>
+        <a href="/login" class="btn btn-outline-secondary btn-lg">
+          <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h5>Cine UTT</h5>
+            <p>La mejor experiencia cinematográfica.</p>
+          </div>
+          <div class="col-md-4">
+            <h5>Enlaces</h5>
+            <ul class="list-unstyled">
+              <li><a href="/" class="text-white">Inicio</a></li>
+              <li><a href="/movies" class="text-white">Películas</a></li>
+              <li><a href="/contact" class="text-white">Contacto</a></li>
+              <li><a href="/privacy" class="text-white">Privacidad</a></li>
+            </ul>
+          </div>
+          <div class="col-md-4">
+            <h5>Contacto</h5>
+            <address>
+              Universidad Tecnológica de Tulancingo<br>
+              Carretera Tulancingo, Hidalgo<br>
+              <i class="bi bi-envelope"></i> info@cineutt.com
+            </address>
+          </div>
+        </div>
+        <hr>
+        <div class="text-center">
+          <p class="mb-0">&copy; 2023 Cine UTT. Todos los derechos reservados.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>

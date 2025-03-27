@@ -16,14 +16,14 @@ public class SecurityConfig{
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		return http
 				.authorizeHttpRequests( auth -> auth
-						.requestMatchers("/index").permitAll()
+						.requestMatchers("/").permitAll()
 						.requestMatchers("/contact").permitAll()
 						.requestMatchers("/store/**").permitAll()
 						.requestMatchers("/register").permitAll()
 						.requestMatchers("/login").permitAll()
 						.requestMatchers("/logout").permitAll()
 						.anyRequest().authenticated()
-								)
+						)
 				.formLogin(form -> form 
 							.defaultSuccessUrl("/", true)
 							)

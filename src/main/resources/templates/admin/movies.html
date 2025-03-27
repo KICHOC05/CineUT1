@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Administrar Películas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      .video-container {
+        position: relative;
+        width: 100%;
+        max-width: 300px;
+      }
+      .video-container video {
+        width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+   <div class="container">
+    <h1 class="text-center my-4">Peliculas</h1>
+    
+    <a class="btn btn-primary mb-3" href="/admin/CreateMovie">Subir Pelicula</a>
+    
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Nombre</th>
+          <th>Genero</th>
+          <th>Sinopsis</th>
+          <th>Horario</th>
+          <th>Sala</th>
+          <th>Imagen</th>
+          <th>Video</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="movie : ${movies}">
+          <td th:text="${movie.id}"></td>
+          <td th:text="${movie.nombre}"></td>
+          <td th:text="${movie.genero}"></td>
+          <td th:text="${movie.sinopsis}"></td>
+          <td th:text="${movie.horario}"></td>
+          <td th:text="${movie.sala}"></td>
+          <td>
+            <img th:if="${movie.imagen}" 
+                 th:src="@{'/images/' + ${movie.imagen}}" 
+                 alt="Poster" 
+                 width="100"
+                 class="img-thumbnail">
+            <span th:unless="${movie.imagen}" class="text-muted">Sin imagen</span>
+          </td>
+          <td>
+            <div class="video-container" th:if="${movie.video}">
+              <video controls>
+                <source th:src="${movie.video}" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+              </video>
+            </div>
+            <span th:unless="${movie.video}" class="text-muted">Sin video</span>
+          </td>
+          <td th:text="${movie.estadoPelicula}"></td>
+          <td style="white-space:nowrap">
+            <a class="btn btn-primary btn-sm"
+               th:href="@{/admin/EditProduct(id=${movie.id})}">
+               <i class="bi bi-pencil"></i> Editar
+            </a>
+            <a class="btn btn-danger btn-sm"
+               th:href="@{/admin/delete(id=${movie.id})}"
+               onclick="return confirm('¿Estás seguro que deseas eliminar esta película?')">
+               <i class="bi bi-trash"></i> Eliminar
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+   </div>
+
+   <!-- Bootstrap Icons -->
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

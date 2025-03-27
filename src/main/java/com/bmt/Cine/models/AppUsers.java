@@ -1,104 +1,123 @@
-// Define el paquete donde se encuentra la clase
 package com.bmt.Cine.models;
 
-// Importa las clases necesarias
-import java.util.Date;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import java.util.Date;
 
-// Marca la clase como una entidad JPA
 @Entity
-// Especifica el nombre de la tabla en la base de datos
-@Table(name="users")
+@Table(name = "users")
 public class AppUsers {
-	
-    // Marca el campo como la clave primaria
+    
     @Id
-    // Configura la generación automática del valor de la clave primaria
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-	
-    private String Nombre;
-    private String Apellido;
-	
-    // Define una columna con restricciones: única y no nula
+    
+    @NotBlank(message = "Nombre es obligatorio")
+    @Size(max = 50, message = "Máximo 50 caracteres")
+    private String nombre;
+    
+    @NotBlank(message = "Apellido es obligatorio")
+    @Size(max = 50, message = "Máximo 50 caracteres")
+    private String apellido;
+    
+    @NotBlank(message = "Email es obligatorio")
+    @Email(message = "Formato de email inválido")
     @Column(unique = true, nullable = false)
     private String email;
-	
+    
+    @Size(max = 20, message = "Máximo 20 caracteres")
     private String telefono;
+    
+    @Size(max = 100, message = "Máximo 100 caracteres")
     private String direccion;
+    
+    @NotBlank(message = "Contraseña es obligatoria")
+    @Size(min = 6, message = "Mínimo 6 caracteres")
     private String contraseña;
+    
     private String rol;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(updatable = false)
     private Date createdAt;
 
-    // Getter y Setter para el campo id
-    public int getId() {
-        return id;
-    }
-    public void setId(int id) {
-        this.id = id;
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = new Date();
     }
 
-    // Getter y Setter para el campo Nombre
-    public String getNombre() {
-        return Nombre;
-    }
-    public void setNombre(String nombre) {
-        Nombre = nombre;
-    }
+	public int getId() {
+		return id;
+	}
 
-    // Getter y Setter para el campo Apellido
-    public String getApellido() {
-        return Apellido;
-    }
-    public void setApellido(String apellido) {
-        Apellido = apellido;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    // Getter y Setter para el campo email
-    public String getEmail() {
-        return email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
+	public String getNombre() {
+		return nombre;
+	}
 
-    // Getter y Setter para el campo telefono
-    public String getTelefono() {
-        return telefono;
-    }
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
 
-    // Getter y Setter para el campo direccion
-    public String getDireccion() {
-        return direccion;
-    }
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
+	public String getApellido() {
+		return apellido;
+	}
 
-    // Getter y Setter para el campo contraseña
-    public String getContraseña() {
-        return contraseña;
-    }
-    public void setContraseña(String contraseña) {
-        this.contraseña = contraseña;
-    }
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
 
-    // Getter y Setter para el campo rol
-    public String getRol() {
-        return rol;
-    }
-    public void setRol(String rol) {
-        this.rol = rol;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    // Getter y Setter para el campo createdAt
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getTelefono() {
+		return telefono;
+	}
+
+	public void setTelefono(String telefono) {
+		this.telefono = telefono;
+	}
+
+	public String getDireccion() {
+		return direccion;
+	}
+
+	public void setDireccion(String direccion) {
+		this.direccion = direccion;
+	}
+
+	public String getContraseña() {
+		return contraseña;
+	}
+
+	public void setContraseña(String contraseña) {
+		this.contraseña = contraseña;
+	}
+
+	public String getRol() {
+		return rol;
+	}
+
+	public void setRol(String rol) {
+		this.rol = rol;
+	}
+
+	public Date getCreatedAt() {
+		return createdAt;
+	}
+
+	public void setCreatedAt(Date createdAt) {
+		this.createdAt = createdAt;
+	}
+
+    // Getters y Setters (generar todos)
+    
 }
