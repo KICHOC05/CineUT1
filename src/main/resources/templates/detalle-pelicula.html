@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${movie.nombre} + ' - Cine UTT'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .movie-header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
+                        url('https://via.placeholder.com/1920x500') center/cover;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .movie-poster {
+            max-height: 450px;
+            width: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .trailer-container {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">Cine UTT</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/cartelera">Cartelera</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contacto</a>
+                    </li>
+                </ul>
+                <a href="/cartelera" class="btn btn-outline-light">
+                    <i class="bi bi-arrow-left"></i> Volver a cartelera
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Encabezado de película -->
+    <div class="movie-header text-white">
+        <div class="container">
+            <h1 class="display-4" th:text="${movie.nombre}"></h1>
+            <div class="d-flex gap-2">
+                <span class="badge bg-primary" th:text="${movie.genero}"></span>
+                <span class="badge bg-success" th:text="${movie.estadoPelicula}"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="container mb-5">
+        <div class="row">
+            <!-- Columna izquierda: Poster -->
+            <div class="col-lg-4 mb-4">
+                <img th:src="@{'/images/' + ${movie.imagen}}" 
+                     class="movie-poster img-fluid"
+                     th:onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+            </div>
+            
+            <!-- Columna derecha: Detalles -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Sinopsis</h3>
+                        <p class="card-text lead" th:text="${movie.sinopsis}"></p>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Información</h5>
+                                <p><strong>Horario:</strong> <span th:text="${movie.horario}"></span></p>
+                                <p><strong>Sala:</strong> <span th:text="${movie.sala}"></span></p>
+                                <p><strong>Estado:</strong> 
+                                    <span class="badge" 
+                                          th:classappend="${movie.estadoPelicula == 'Disponible'} ? 'bg-success' : 'bg-secondary'"
+                                          th:text="${movie.estadoPelicula}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">Tráiler</h5>
+                                <div class="ratio ratio-16x9 trailer-container">
+                                    <div th:if="${movie.video}">
+                                        <video controls width="100%">
+                                            <source th:src="@{'/videos/' + ${movie.video}}" type="video/mp4">
+                                            Tu navegador no soporta el video.
+                                        </video>
+                                    </div>
+                                    <div th:unless="${movie.video}" class="d-flex justify-content-center align-items-center bg-dark text-white h-100">
+                                        <i class="bi bi-film me-2"></i>
+                                        <span>Tráiler no disponible</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid">
+                    <a href="#" class="btn btn-danger btn-lg py-3">
+                        <i class="bi bi-ticket-perforated"></i> Comprar Boletos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Cine UTT</h5>
+                    <p>La mejor experiencia cinematográfica.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-white">Inicio</a></li>
+                        <li><a href="/movies" class="text-white">Cartelera</a></li>
+                        <li><a href="/contact" class="text-white">Contacto</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <address>
+                        Universidad Tecnológica de Tulancingo<br>
+                        <i class="bi bi-envelope"></i> info@cineutt.com
+                    </address>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 Cine UTT. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -35,12 +35,11 @@
 <body>
     <div class="container py-5">
         <div class="form-container">
-            <h2 class="form-title"><i class="bi bi-film"></i> Agregar Nueva Película</h2>
+            <h2 class="form-title"><i class="bi bi-film"></i> Editar Película</h2>
             
             <form method="post" enctype="multipart/form-data" th:object="${movieDto}">
                 <!-- Token CSRF -->
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />				
                 <!-- Nombre -->
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Nombre</label>
@@ -98,7 +97,10 @@
                             th:errors="${movieDto.sala}"></p>
                     </div>
                 </div>
-                
+
+			
+				
+				
                 <!-- Imagen -->
                 <div class="row mb-3">
                     <label class="col-sm-4 col-form-label">Imagen (Poster)</label>
@@ -128,7 +130,7 @@
                             <option value="Estreno">Estreno</option>
                             <option value="Cartelera">Cartelera</option>
                             <option value="Próximamente">Próximamente</option>
-                  1          <option value="Fuera de Cartelera">Fuera de Cartelera</option>
+                            <option value="Fuera de Cartelera">Fuera de Cartelera</option>
                         </select>
                         <p th:if="${#fields.hasErrors('estado')}" th:errorclass="text-danger"
                             th:errors="${movieDto.estado}"></p>

@@ -36,23 +36,83 @@
         padding: 1rem;
         margin-top: 2rem;
       }
+      /* Estilos para el sidebar */
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: -250px;
+        width: 250px;
+        height: 100%;
+        background: #343a40;
+        transition: all 0.3s;
+        z-index: 1050;
+      }
+      .sidebar.active {
+        left: 0;
+      }
+      .sidebar-toggle {
+        position: fixed;
+        left: 10px;
+        top: 10px;
+        z-index: 1060;
+        background: #343a40;
+        color: white;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      /* Estilos para el carrusel */
+      .carousel-item {
+        height: 500px;
+      }
+      .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+      }
+      .carousel-caption {
+        background-color: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 20px;
+      }
     </style>
   </head>
   <body>
     
+    <!-- Botón de menú simplificado (tres rayas) -->
+    <button sec:authorize="hasRole('ADMIN')" 
+            class="sidebar-toggle" 
+            id="sidebarToggle">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- Sidebar del Dashboard -->
+    <div sec:authorize="hasRole('ADMIN')" class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h5><i class="bi bi-speedometer2"></i> Panel Admin</h5>
+      </div>
+      <ul class="nav flex-column p-3">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/admin/users">
+            <i class="bi bi-people-fill"></i> Usuarios
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/admin/movies">
+            <i class="bi bi-film"></i> Películas
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/admin/emails">
+            <i class="bi bi-envelope"></i> Enviar Emails
+          </a>
+        </li>
+      </ul>
+    </div>
+
     <!-- Barra de navegación -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <div class="container">
         <a class="navbar-brand" href="/">Cine UTT</a>
-        
-        <!-- Botón de Dashboard para Admin -->
-        <button sec:authorize="hasRole('ADMIN')" 
-                class="btn btn-outline-danger me-2" 
-                type="button" 
-                data-bs-toggle="offcanvas" 
-                data-bs-target="#dashboardOffcanvas">
-          <i class="bi bi-speedometer2"></i> Dashboard
-        </button>
         
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarPublic">
           <span class="navbar-toggler-icon"></span>
@@ -64,7 +124,7 @@
               <a class="nav-link active" href="/">Inicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/movies">Películas</a>
+              <a class="nav-link" href="/cartelera">Películas</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="/contact">Contacto</a>
@@ -82,7 +142,6 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-end">
                 <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> Perfil</a></li>
-                <li sec:authorize="hasRole('ADMIN')"><a class="dropdown-item" href="/admin/dashboard"><i class="bi bi-speedometer2"></i> Panel Admin</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                   <form th:action="@{/logout}" method="post">
@@ -102,171 +161,171 @@
       </div>
     </nav>
 
-    <!-- Sidebar del Dashboard (Offcanvas) para Admin -->
-    <div sec:authorize="hasRole('ADMIN')" 
-         class="offcanvas offcanvas-start" 
-         tabindex="-1" 
-         id="dashboardOffcanvas" 
-         aria-labelledby="dashboardLabel">
-      <div class="offcanvas-header bg-dark text-white">
-        <h5 class="offcanvas-title" id="dashboardLabel">
-          <i class="bi bi-speedometer2"></i> Panel de Administración
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/dashboard">
-              <i class="bi bi-speedometer2"></i> Dashboard Principal
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/users">
-              <i class="bi bi-people-fill"></i> Gestión de Usuarios
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/movies">
-              <i class="bi bi-film"></i> Gestión de Películas
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/screenings">
-              <i class="bi bi-calendar-event"></i> Programaciones
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/admin/reports">
-              <i class="bi bi-graph-up"></i> Reportes
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <!-- Contenido principal -->
+    <div class="main-content" id="mainContent">
+      <!-- Sección Hero -->
+      <section class="hero-section">
+        <div class="container">
+          <h1 class="display-4 fw-bold">Bienvenido a Cine UTT</h1>
+          <p class="lead">Disfruta de las mejores películas en cartelera</p>
+          <div class="mt-4">
+            <a href="/cartelera" class="btn btn-primary btn-lg me-2">Ver Cartelera</a>
+            <a href="/register" sec:authorize="!isAuthenticated()" class="btn btn-outline-light btn-lg">Registrarse</a>
+          </div>
+        </div>
+      </section>
 
-    <!-- Sección Hero -->
-    <section class="hero-section">
-      <div class="container">
-        <h1 class="display-4 fw-bold">Bienvenido a Cine UTT</h1>
-        <p class="lead">Disfruta de las mejores películas en cartelera</p>
-        <div class="mt-4">
-          <a href="/movies" class="btn btn-primary btn-lg me-2">Ver Cartelera</a>
-          <a href="/register" sec:authorize="!isAuthenticated()" class="btn btn-outline-light btn-lg">Registrarse</a>
+      <!-- Carrusel de imágenes -->
+      <div id="cineCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+          <button type="button" data-bs-target="#cineCarousel" data-bs-slide-to="0" class="active"></button>
+          <button type="button" data-bs-target="#cineCarousel" data-bs-slide-to="1"></button>
+          <button type="button" data-bs-target="#cineCarousel" data-bs-slide-to="2"></button>
         </div>
-      </div>
-    </section>
-
-    <!-- Contenido principal público -->
-    <div class="container my-5">
-      <!-- Panel de Admin (solo visible para administradores) -->
-      <div sec:authorize="hasRole('ADMIN')" class="admin-panel">
-        <h3><i class="bi bi-shield-lock"></i> Zona de Administración</h3>
-        <p>Bienvenido al panel de control administrativo. Desde aquí puedes gestionar todos los aspectos del cine.</p>
-        <div class="d-grid gap-2 d-md-flex">
-          <a href="/admin/dashboard" class="btn btn-danger me-md-2">
-            <i class="bi bi-speedometer2"></i> Ir al Dashboard
-          </a>
-          <a href="/admin/movies" class="btn btn-outline-danger">
-            <i class="bi bi-film"></i> Gestionar Películas
-          </a>
-        </div>
-      </div>
-      
-      <div class="row text-center mb-5">
-        <div class="col">
-          <h2>Nuestras Películas Destacadas</h2>
-          <p class="lead">Descubre lo mejor del cine actual</p>
-        </div>
-      </div>
-      
-      <div class="row">
-        <!-- Película 1 -->
-        <div class="col-md-4">
-          <div class="card feature-card">
-            <img src="https://via.placeholder.com/300x450" class="card-img-top" alt="Película 1">
-            <div class="card-body">
-              <h5 class="card-title">Película 1</h5>
-              <p class="card-text">Breve descripción de la película.</p>
-              <a href="#" class="btn btn-outline-primary">Ver detalles</a>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="https://chajarialdia.com.ar/wp-content/uploads/2024/05/Dia-del-cine-1.jpg" class="d-block w-100" alt="Cine UTT">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Estrenos Exclusivos</h5>
+              <p>Descubre las películas más esperadas del año.</p>
             </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://scontent.fmex10-3.fna.fbcdn.net/v/t39.30808-6/464638117_3456861897791206_662102605776486565_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=127cfc&_nc_ohc=5Eia_MeQtNAQ7kNvgHPpWUF&_nc_oc=Adl0zEYBg6wPTEJCbke55f7qf589vaCKGq4TUjqwiAtpF1xK75m7lXp4JYhau7O6yQXhq8spRTmJdpa_OYFXrWKX&_nc_zt=23&_nc_ht=scontent.fmex10-3.fna&_nc_gid=la3janJnrdHJyP5Mo6yMSQ&oh=00_AYFXundgeB7STjPgzxHojqHkCPMN4OZEwuLeXpuF8n_iFQ&oe=67EFEBC6" class="d-block w-100" alt="Promociones">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>Promociones Especiales</h5>
+              <p>Martes y miércoles 2x1 en todas las funciones.</p>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <img src="https://i0.wp.com/eltiempolatino.com/wp-content/uploads/2022/08/cine.jpg?w=1315&ssl=1" class="d-block w-100" alt="Experiencia">
+            <div class="carousel-caption d-none d-md-block">
+              <h5>La Mejor Experiencia</h5>
+              <p>Pantallas 4K y sonido envolvente.</p>
+            </div>
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#cineCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#cineCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+
+      <!-- Contenido principal público -->
+      <div class="container my-5">
+        <!-- Panel de Admin (solo visible para administradores) -->
+        <div sec:authorize="hasRole('ADMIN')" class="admin-panel">
+          <h3><i class="bi bi-shield-lock"></i> Zona de Administración</h3>
+          <p>Bienvenido al panel de control administrativo. Desde aquí puedes gestionar todos los aspectos del cine.</p>
+          <div class="d-grid gap-2 d-md-flex">
+          
+            <a href="/admin/movies" class="btn btn-outline-danger">
+              <i class="bi bi-film"></i> Gestionar Películas
+            </a>
           </div>
         </div>
         
-        <!-- Película 2 -->
-        <div class="col-md-4">
-          <div class="card feature-card">
-            <img src="https://via.placeholder.com/300x450" class="card-img-top" alt="Película 2">
-            <div class="card-body">
-              <h5 class="card-title">Película 2</h5>
-              <p class="card-text">Breve descripción de la película.</p>
-              <a href="#" class="btn btn-outline-primary">Ver detalles</a>
-            </div>
+        <div class="row text-center mb-5">
+          <div class="col">
+            <h2>Películas Destacadas</h2>
+            <p class="lead">Las más populares de nuestra cartelera</p>
           </div>
         </div>
         
-        <!-- Película 3 -->
-        <div class="col-md-4">
-          <div class="card feature-card">
-            <img src="https://via.placeholder.com/300x450" class="card-img-top" alt="Película 3">
-            <div class="card-body">
-              <h5 class="card-title">Película 3</h5>
-              <p class="card-text">Breve descripción de la película.</p>
-              <a href="#" class="btn btn-outline-primary">Ver detalles</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Sección de autenticación (solo para no autenticados) -->
-    <div class="auth-section" sec:authorize="!isAuthenticated()">
-      <div class="container text-center">
-        <h2>¿Listo para disfrutar?</h2>
-        <p class="lead mb-4">Regístrate ahora para reservar tus entradas y acceder a promociones exclusivas</p>
-        <a href="/register" class="btn btn-primary btn-lg me-3">
-          <i class="bi bi-person-plus"></i> Crear cuenta
-        </a>
-        <span class="mx-2">o</span>
-        <a href="/login" class="btn btn-outline-secondary btn-lg">
-          <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
-        </a>
-      </div>
-    </div>
-
-    <!-- Footer -->
-    <footer class="bg-dark text-white py-4 mt-5">
-      <div class="container">
         <div class="row">
-          <div class="col-md-4">
-            <h5>Cine UTT</h5>
-            <p>La mejor experiencia cinematográfica.</p>
-          </div>
-          <div class="col-md-4">
-            <h5>Enlaces</h5>
-            <ul class="list-unstyled">
-              <li><a href="/" class="text-white">Inicio</a></li>
-              <li><a href="/movies" class="text-white">Películas</a></li>
-              <li><a href="/contact" class="text-white">Contacto</a></li>
-              <li><a href="/privacy" class="text-white">Privacidad</a></li>
-            </ul>
-          </div>
-          <div class="col-md-4">
-            <h5>Contacto</h5>
-            <address>
-              Universidad Tecnológica de Tulancingo<br>
-              Carretera Tulancingo, Hidalgo<br>
-              <i class="bi bi-envelope"></i> info@cineutt.com
-            </address>
+          <!-- Mostrar solo las primeras 3 películas -->
+          <div class="col-md-4" th:each="movie, stat : ${movies}" th:if="${stat.index < 3}">
+            <div class="card feature-card">
+              <img th:src="@{'/images/' + ${movie.imagen}}" 
+                   class="card-img-top" 
+                   th:alt="${movie.nombre}"
+                   th:onerror="this.src='https://via.placeholder.com/300x450?text=Poster'">
+              <div class="card-body">
+                <h5 class="card-title" th:text="${movie.nombre}"></h5>
+                <p class="card-text" th:text="${movie.genero}"></p>
+                <a th:href="@{'/cartelera/' + ${movie.id}}" class="btn btn-outline-primary">Ver detalles</a>
+              </div>
+            </div>
           </div>
         </div>
-        <hr>
-        <div class="text-center">
-          <p class="mb-0">&copy; 2023 Cine UTT. Todos los derechos reservados.</p>
+        
+        <div class="text-center mt-4">
+          <a href="/cartelera" class="btn btn-primary btn-lg">Ver toda la cartelera</a>
         </div>
       </div>
-    </footer>
+
+      <!-- Sección de autenticación (solo para no autenticados) -->
+      <div class="auth-section" sec:authorize="!isAuthenticated()">
+        <div class="container text-center">
+          <h2>¿Listo para disfrutar?</h2>
+          <p class="lead mb-4">Regístrate ahora para reservar tus entradas y acceder a promociones exclusivas</p>
+          <a href="/register" class="btn btn-primary btn-lg me-3">
+            <i class="bi bi-person-plus"></i> Crear cuenta
+          </a>
+          <span class="mx-2">o</span>
+          <a href="/login" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+          </a>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4">
+              <h5>Cine UTT</h5>
+              <p>La mejor experiencia cinematográfica.</p>
+            </div>
+            <div class="col-md-4">
+              <h5>Enlaces</h5>
+              <ul class="list-unstyled">
+                <li><a href="/" class="text-white">Inicio</a></li>
+                <li><a href="/cartelera" class="text-white">Películas</a></li>
+                <li><a href="/contact" class="text-white">Contacto</a></li>
+                <li><a href="/privacy" class="text-white">Privacidad</a></li>
+              </ul>
+            </div>
+            <div class="col-md-4">
+              <h5>Contacto</h5>
+              <address>
+                Universidad Tecnológica de Tulancingo<br>
+                Carretera Tulancingo, Hidalgo<br>
+                <i class="bi bi-envelope"></i> info@cineutt.com
+              </address>
+            </div>
+          </div>
+          <hr>
+          <div class="text-center">
+            <p class="mb-0">&copy; 2023 Cine UTT. Todos los derechos reservados.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Script para manejar el sidebar
+      document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mainContent = document.getElementById('mainContent');
+        
+        if (sidebarToggle) {
+          sidebarToggle.addEventListener('click', function() {
+            sidebar.classList.toggle('active');
+            mainContent.classList.toggle('shifted');
+          });
+        }
+        
+        // Inicializar carrusel
+        var myCarousel = new bootstrap.Carousel(document.getElementById('cineCarousel'), {
+          interval: 5000,
+          wrap: true
+        });
+      });
+    </script>
   </body>
 </html>

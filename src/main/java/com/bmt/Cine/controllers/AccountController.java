@@ -24,7 +24,7 @@ public class AccountController {
 	@Autowired
 	private AppUserRepository repo;
 	
-	@GetMapping("register")
+	@GetMapping("/register")
 	public String register (Model model) {
 		RegisterDto registerDto = new RegisterDto();
 		model.addAttribute(registerDto);

@@ -22,4 +22,6 @@ public class CineApplication {
 	public LayoutDialect layoutDialect() {
 		return new LayoutDialect();
 	}
+	
+	
 }

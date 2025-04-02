@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuario</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        .card-header {
+            background-color: #ffc107 !important;
+        }
+        .btn-warning {
+            color: white;
+        }
+        .form-control:read-only {
+            background-color: #e9ecef;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- Mensajes de éxito/error -->
+        <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle"></i> <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle"></i> <span th:text="${errorMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header text-white">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0"><i class="bi bi-pencil-square"></i> Editar Usuario</h4>
+                            <span class="badge bg-dark" th:text="'ID: ' + ${userDto.id}"></span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="@{/admin/users/edit}" th:object="${userDto}">
+                            <!-- Token CSRF -->
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                            
+                            <!-- ID del usuario -->
+                            <input type="hidden" th:field="*{id}" />
+                            
+                            <!-- Nombre -->
+                            <div class="mb-3">
+                                <label class="form-label">Nombre <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{nombre}" required>
+                                <div th:if="${#fields.hasErrors('nombre')}" class="text-danger small mt-1" 
+                                     th:errors="*{nombre}"></div>
+                            </div>
+                            
+                            <!-- Apellido -->
+                            <div class="mb-3">
+                                <label class="form-label">Apellido <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" th:field="*{apellido}" required>
+                                <div th:if="${#fields.hasErrors('apellido')}" class="text-danger small mt-1"
+                                     th:errors="*{apellido}"></div>
+                            </div>
+                            
+                            <!-- Email (solo lectura) -->
+                            <div class="mb-3">
+                                <label class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" th:field="*{email}" readonly>
+                                <small class="text-muted">El email no puede ser modificado</small>
+                            </div>
+                            
+                            <!-- Teléfono -->
+                            <div class="mb-3">
+                                <label class="form-label">Teléfono</label>
+                                <input type="text" class="form-control" th:field="*{telefono}">
+                                <div th:if="${#fields.hasErrors('telefono')}" class="text-danger small mt-1"
+                                     th:errors="*{telefono}"></div>
+                            </div>
+                            
+                            <!-- Dirección -->
+                            <div class="mb-3">
+                                <label class="form-label">Dirección</label>
+                                <input type="text" class="form-control" th:field="*{direccion}">
+                                <div th:if="${#fields.hasErrors('direccion')}" class="text-danger small mt-1"
+                                     th:errors="*{direccion}"></div>
+                            </div>
+                            <!-- Rol -->
+                            <div class="mb-3">
+                                <label class="form-label">Rol <span class="text-danger">*</span></label>
+                                <select class="form-select" th:field="*{rol}" required>
+                                    <option value="">Seleccione un rol...</option>
+                                    <option value="USER">Usuario Normal</option>
+                                    <option value="ADMIN">Administrador</option>
+                                </select>
+                                <div th:if="${#fields.hasErrors('rol')}" class="text-danger small mt-1"
+                                     th:errors="*{rol}"></div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4 pt-3 border-top">
+                                <a th:href="@{/admin/users}" class="btn btn-outline-secondary me-md-2">
+                                    <i class="bi bi-arrow-left"></i> Cancelar
+                                </a>
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Validación de campos requeridos
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            if (!isValid) {
+                e.preventDefault();
+                alert('Por favor complete todos los campos requeridos');
+            }
+        });
+    </script>
+</body>
+</html>

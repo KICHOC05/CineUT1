@@ -21,7 +21,7 @@ public class MovieDto {
 	@NotEmpty(message = "Las sala es requerida")
 	private String sala;
 	
-	@NotEmpty(message = "El poster es requerido")
+
 	private MultipartFile imagen;
 	
 	@NotEmpty(message = "El trailer es requerido")
@@ -29,8 +29,8 @@ public class MovieDto {
 	
 	@NotEmpty(message = "El estado es requerido")
 	private String estado;
-
-	public String getNombre() {
+	
+ 	public String getNombre() {
 		return nombre;
 	}
 
