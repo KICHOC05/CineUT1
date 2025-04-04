@@ -26,12 +26,7 @@ public class HomeController {
         model.addAttribute("movies", moviesRepository.findAll());
         return "index";
     }
-    // Mapea la ruta "/contact" al método contact()
-    @GetMapping({"/contact"})
-    public String contact() {
-        // Devuelve la vista "contact" (contact.html)
-        return "contact";
-    }
+  
 }
     
     
