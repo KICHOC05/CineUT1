@@ -1,8 +1,13 @@
+# Usa una imagen oficial de Maven con JDK 17 para construir
 FROM maven:3.8.5-openjdk-17 AS build
-COPY . .
+WORKDIR /app
+COPY pom.xml .
+COPY src ./src
 RUN mvn clean package -DskipTests
 
-FROM dvmarques/openjdk-17-jdk-slim
-COPY --from=build /build/target/demo-0.0.1-SNAPSHOT.jar demo.jar
+# Usa una imagen oficial de OpenJDK 17 para ejecutar
+FROM eclipse-temurin:17-jre-jammy
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar","demo.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
